@@ -4,7 +4,7 @@ GeoHex V3 implementation in Ruby (WiP)
 
 ## INSTALL
 
-   sudo gem install geohex3
+   sudo gem install geo_hex
 
 ## QUICK START
 
