@@ -8,9 +8,10 @@ GeoHex V3 implementation in Ruby (WiP)
 
 ## QUICK START
 
-   require 'geohex'
+   require 'geo_hex'
    GeoHex.encode(35.647401,139.716911,1)
    => '132KpuG'
+
    GeoHex.decode('0dMV')
    => [24.338279000000004,124.1577708779443,7]
 
