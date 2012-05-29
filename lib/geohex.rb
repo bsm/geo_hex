@@ -1,32 +1,70 @@
 module GeoHex
   VERSION = "3.01".freeze
-  H_KEY   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".freeze
-  H_BASE  = 20037508.34
-  H_DEG   = Math::PI / 6.0
-  H_K     = Math.tan(H_DEG)
-  XY      = Struct.new(:x, :y)
-  LOC     = Struct.new(:lat, :lon)
 
-  # @param [Float] lat the latitude
-  # @param [Float] lon the longitude
-  # @return [GeoHex::XY] the coordinates
-  def self.loc2xy(lat, lon)
-    x  = lon * H_BASE / 180
-    y  = Math.log(Math.tan((90 + lat) * Math::PI / 360)) / (Math::PI / 180)
-    y *= H_BASE / 180
-    XY.new(x, y)
+  H_KEY  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".freeze
+  H_BASE = 20037508.34
+  H_DEG  = Math::PI / 6.0
+  H_RAD  = H_BASE / 180.0
+  H_K    = Math.tan(H_DEG)
+  H_D2R  = Math::PI / 180.0
+
+  # X/Y coordinates
+  class XY < Struct.new(:x, :y)
+
+    # @param [Float] x the X coordinate
+    # @param [Float] y the Y coordinate
+    # @return [GeoHex::XY] a normalized X/Y position
+    def self.pos(x, y)
+      x0, y0 = x.floor, y.floor
+      xq, yq = x - x0, y - y0
+      xn, yn = x.round, y.round
+
+      if  yq > -xq + 1
+        if yq < 2 * xq && yq > 0.5 * xq
+          xn, yn = x0 + 1, y0 + 1
+        end
+      elsif yq < -xq + 1
+        if yq > 2 * xq - 1 && yq < 0.5 * xq + 0.5
+          xn, yn = x0, y0
+        end
+      end
+
+      new(xn, yn)
+    end
+
+    # Converts coordinates to Lat/Lon model
+    # @return [GeoHex::LL] the coordinates
+    def to_ll
+      lon, lat = [x, y].map {|i| (i / H_BASE) * 180.0 }
+      lat = 180.0 / Math::PI * (2 * Math.atan(Math.exp(lat * H_D2R)) - Math::PI / 2.0)
+      LL.new(lat, lon)
+    end
+
+    # @return [GeoHex::XY] inverted coordinates (destructive)
+    def invert!
+      xx = x
+      self.x = y
+      self.y = xx
+      self
+    end
+
   end
 
-  # @param [Integer] x the x coordinate
-  # @param [Integer] y the y coordinate
-  # @return [GeoHex::LOC] the location
-  def self.xy2loc(x, y)
-    lon, lat = [x, y].map {|i| (i / H_BASE) * 180 }
-    lat = 180 / Math::PI * (2 * Math.atan(Math.exp(lat * Math::PI / 180)) - Math::PI / 2)
-    LOC.new(lat, lon)
+  # Lat/Lon coordinates
+  class LL < Struct.new(:lat, :lon)
+
+    # Converts coordinates to X/Y model
+    # @return [GeoHex::XY] the coordinates
+    def to_xy
+      x = lon * H_RAD
+      y = Math.log(Math.tan((90 + lat) * H_D2R / 2)) / H_D2R * H_RAD
+      XY.new(x, y)
+    end
+
   end
 
-  class Zone < String
+  # GeoHex Zone
+  class Zone
 
     # @param [Integer] level
     # @return [Float] zone size for the given `level`
@@ -38,93 +76,84 @@ module GeoHex
     # @param [Float] lon the longitude
     # @return [Integer] the zone level
     def self.encode(lat, lon, level = 7)
-      level += 2
-      h_size = size(level)
+      h_size = size(level+2)
       unit_x = 6 * h_size.to_f
       unit_y = 6 * h_size * H_K
 
-      z_xy    = GeoHex.loc2xy(lat, lon)
-      h_pos_x = (z_xy.x + z_xy.y / H_K) / unit_x
-      h_pos_y = (z_xy.y - H_K * z_xy.x) / unit_y
+      z_xy  = GeoHex::LL.new(lat, lon).to_xy
+      h_x   = (z_xy.x + z_xy.y / H_K) / unit_x
+      h_y   = (z_xy.y - H_K * z_xy.x) / unit_y
+      h_pos = GeoHex::XY.pos h_x, h_y
 
-      h_x_0   = h_pos_x.floor
-      h_y_0   = h_pos_y.floor
-      h_x_q   = h_pos_x - h_x_0
-      h_y_q   = h_pos_y - h_y_0
-      h_x     = h_pos_x.round
-      h_y     = h_pos_y.round
-
-      if  h_y_q > -h_x_q + 1
-        if h_y_q < 2 * h_x_q && h_y_q > 0.5 * h_x_q
-          h_x, h_y = h_x_0 + 1, h_y_0 + 1
-        end
-      elsif h_y_q < -h_x_q + 1
-        if h_y_q > 2 * h_x_q - 1 && h_y_q < 0.5 * h_x_q + 0.5
-          h_x, h_y = h_x_0, h_y_0
-        end
-      end
-
-      h_lat = (H_K * h_x * unit_x + h_y * unit_y) / 2.0
-      h_lon = (h_lat - h_y * unit_y) / H_K
-      z_loc = GeoHex.xy2loc(h_lon, h_lat)
+      h_lat = (H_K * h_pos.x * unit_x + h_pos.y * unit_y) / 2.0
+      h_lon = (h_lat - h_pos.y * unit_y) / H_K
+      z_ll  = GeoHex::XY.new(h_lon, h_lat).to_ll
 
       if H_BASE - h_lon < h_size
-        z_loc.lon = 180
-        h_xy      = h_x
-        h_x       = h_y
-        h_y       = h_xy
+        z_ll.lon = 180
+        h_pos.invert!
       end
 
-      mod_x, mod_y = h_x, h_y
-      h_code = (0..level).map do |i|
-        h_pow = 3 ** (level-i)
-        h_p2c = (h_pow / 2.0).ceil
+      new(z_ll, h_pos, level)
+    end
 
-        code3_x = if mod_x >= h_p2c
-          mod_x -= h_pow
-          2
-        elsif mod_x <= -h_p2c
-          mod_x += h_pow
-          0
-        else
-          1
+    attr_reader :ll, :pos, :level
+
+    # @param [GeoHex::LL] ll lat/lon coordinates
+    # @param [GeoHex::Position] pos X/Y position
+    # @param [Integer] level the granularity level
+    def initialize (ll, pos, level)
+      @ll, @pos, @level = ll, pos, level
+    end
+
+    # @return [Float] latitude
+    def lat
+      ll.lat
+    end
+
+    # @return [Float] longitude
+    def lon
+      ll.lon
+    end
+
+    # @return [String] geo code
+    def code
+      @code ||= begin
+        string, mod_x, mod_y = "", pos.x, pos.y
+
+        (0..level+2).reverse_each do |i|
+          pow = 3 ** i
+          p2c = (pow / 2.0).ceil
+
+          c3_x = if mod_x >= p2c
+            mod_x -= pow
+            2
+          elsif mod_x <= -p2c
+            mod_x += pow
+            0
+          else
+            1
+          end
+
+          c3_y = if mod_y >= p2c
+            mod_y -= pow
+            2
+          elsif mod_y <= -p2c
+            mod_y += pow
+            0
+          else
+            1
+          end
+
+          string << Integer([c3_x, c3_y].join, 3).to_s
         end
 
-        code3_y = if mod_y >= h_p2c
-          mod_y -= h_pow
-          2
-        elsif mod_y <= -h_p2c
-          mod_y += h_pow
-          0
-        else
-          1
-        end
-
-        Integer([code3_x, code3_y].join, 3)
-      end.join
-
-      h_int  = h_code[0..2].to_i
-      h_code = H_KEY[h_int / 30] + H_KEY[h_int % 30] + h_code[3..-1]
-
-      new z_loc.lat, z_loc.lon, h_x, h_y, h_code
+        number = string[0..2].to_i
+        H_KEY[number / 30] + H_KEY[number % 30] + string[3..-1]
+      end
     end
-
-    attr_reader :lat, :lon, :x, :y, :code
-
-    # @param [Float] lat the latitude
-    # @param [Float] lon the longitude
-    # @param [Integer] x the x coordinate
-    # @param [Integer] y the y coordinate
-    # @param [String] code the GeoHex code
-    def initialize (lat, lon, x, y, code)
-      @lat, @lon, @x, @y = lat, lon, x, y
-      super(code)
-    end
-
-    # @return [Integer] the zone level
-    def level
-      size - 2
-    end
+    alias_method :to_s, :code
 
   end
+
 end
