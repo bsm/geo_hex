@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/geohex', __FILE__)
+require File.expand_path('../lib/geo_hex/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.required_ruby_version = '>= 1.9.0'
   s.required_rubygems_version = ">= 1.3.6"
 
-  s.name        = "geohex3"
-  s.summary     = "GeoHex V3"
+  s.name        = "geo_hex"
+  s.summary     = "GeoHex (V3)"
   s.description = "Ruby implementation of GeoHex encoding algorithm"
   s.version     = GeoHex::VERSION.dup
 

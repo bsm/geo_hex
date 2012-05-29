@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    geohex3 (3.01)
+    geo_hex (3.01)
 
 GEM
   remote: http://rubygems.org/
@@ -22,6 +22,6 @@ PLATFORMS
 
 DEPENDENCIES
   bundler
-  geohex3!
+  geo_hex!
   rake
   rspec

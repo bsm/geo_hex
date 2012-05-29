@@ -1,3 +1,3 @@
 require 'csv'
 require 'rspec'
-require 'geohex'
+require 'geo_hex'
