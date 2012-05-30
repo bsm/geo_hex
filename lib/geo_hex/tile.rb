@@ -14,16 +14,12 @@ module GeoHex
 
       x0, y0 = x.floor, y.floor
       xq, yq = x - x0, y - y0
-      xn, yn = x.round, y.round
-
-      if yq > -xq + 1
-        if yq < 2 * xq && yq > 0.5 * xq
-          xn, yn = x0 + 1, y0 + 1
-        end
-      elsif yq < -xq + 1
-        if yq > 2 * xq - 1 && yq < 0.5 * xq + 0.5
-          xn, yn = x0, y0
-        end
+      xn, yn = if yq > -xq + 1 && yq < 2 * xq && yq > 0.5 * xq
+        [x0 + 1, y0 + 1]
+      elsif yq < -xq + 1 && yq > 2 * xq - 1 && yq < 0.5 * xq + 0.5
+        [x0, y0]
+      else
+        [x.round, y.round]
       end
 
       new(xn, yn, level)
