@@ -1,7 +1,7 @@
 module GeoHex
 
   # A positioned instance of a Unit, within a level-grid
-  class Tile < Struct.new(:x, :y)
+  class Tile
 
     # @param [Float] the mercator easting
     # @param [Float] the mercator northing
@@ -29,43 +29,32 @@ module GeoHex
       new(xn, yn, level)
     end
 
+    # @return [Integer] the tile coordinates within the grid
+    attr_reader :x, :y
+
+    # @return [GeoHex::Unit] the associated unit
     attr_reader :unit
+
+    # @return [Float] the mercator northing
+    attr_reader :northing
+
+    # @return [Float] the mercator easting
+    attr_reader :easting
 
     # @param [Integer] x the horizontal index
     # @param [Integer] y the vertical index
     # @param [Integer] level the level
     def initialize(x, y, level)
-      @unit = Unit[level]
-      super(x, y)
-      reset
-    end
-
-    # Resets the cached values
-    # @return [GeoHex::Tile]
-    def reset
-      @easting = @northing = nil
-      self.x, self.y = y, x if meridian_180?
-      self
+      @x, @y    = x, y
+      @unit     = Unit[level]
+      @northing = (H_K * @x * @unit.width + @y * @unit.height) / 2.0
+      @easting  = (@northing - @y * @unit.height) / H_K
+      @x, @y    = @y, @x if meridian_180?
     end
 
     # @return [Integer] the level
     def level
       unit.level
-    end
-
-    # @return [Boolean] true if the tile is placed on the 180th meridian
-    def meridian_180?
-      H_BASE - easting < unit.size
-    end
-
-    # @return [Float] the mercator easting
-    def easting
-      @easting ||= (northing - y * unit.height) / H_K
-    end
-
-    # @return [Float] the mercator northing
-    def northing
-      @northing ||= (H_K * x * unit.width + y * unit.height) / 2.0
     end
 
     # @return [GeoHex::LL] the lat/lon coordinates
@@ -108,10 +97,21 @@ module GeoHex
       end
 
       number = code[0..2].to_i
-      code   = H_KEY[number / 30] + H_KEY[number % 30] + code[3..-1]
+      to_zone "#{H_KEY[number / 30]}#{H_KEY[number % 30]}#{code[3..-1]}"
+    end
 
+    # @param [String] code the GeoHex code
+    # @return [GeoHex::Zone] GeoHex zone
+    def to_zone(code)
       Zone.new to_ll, self, code
     end
+
+    private
+
+      # @return [Boolean] true if the tile is placed on the 180th meridian
+      def meridian_180?
+        H_BASE - easting < unit.size
+      end
 
   end
 end

@@ -29,7 +29,6 @@ describe GeoHex::Tile do
   end
 
   describe "normalize" do
-
     subject { described_class.normalize(-17306, 6710328, 7) }
 
     its(:level) { should == 7 }
@@ -37,7 +36,6 @@ describe GeoHex::Tile do
     its(:y)     { should == 5717 }
     its(:easting)  { should be_within(1).of(-17306) }
     its(:northing) { should be_within(1).of(6710328) }
-
   end
 
 end
