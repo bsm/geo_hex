@@ -37,7 +37,15 @@ module GeoHex
     def initialize(x, y, level)
       @unit = Unit[level]
       super(x, y)
+      reset
+    end
+
+    # Resets the cached values
+    # @return [GeoHex::Tile]
+    def reset
+      @easting = @northing = nil
       self.x, self.y = y, x if meridian_180?
+      self
     end
 
     # @return [Integer] the level
