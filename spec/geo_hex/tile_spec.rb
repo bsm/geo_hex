@@ -6,17 +6,19 @@ describe GeoHex::Tile do
     described_class.new(5700, 5717, 7)
   end
 
+  it             { should_not be_meridian_180 }
   its(:unit)     { should be_instance_of(GeoHex::Unit) }
   its(:level)    { should == 7 }
   its(:easting)  { should be_within(1).of(-17306) }
   its(:northing) { should be_within(1).of(6710328) }
   its(:to_ll)    { should be_instance_of(GeoHex::LL) }
 
+  describe "if on meridian 180" do
+    subject { described_class.new(7, -2, 0) }
 
-  it 'should be invertable' do
-    subject.invert!
-    subject.x.should == 5717
-    subject.y.should == 5700
+    it { should be_meridian_180 }
+    its(:x) { should == -2 }
+    its(:y) { should == 7 }
   end
 
   describe "lan/lon" do
@@ -28,9 +30,7 @@ describe GeoHex::Tile do
 
   describe "normalize" do
 
-    subject do
-      described_class.normalize(-17306, 6710328, 7)
-    end
+    subject { described_class.normalize(-17306, 6710328, 7) }
 
     its(:level) { should == 7 }
     its(:x)     { should == 5700 }

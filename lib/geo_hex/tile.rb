@@ -37,11 +37,17 @@ module GeoHex
     def initialize(x, y, level)
       @unit = Unit[level]
       super(x, y)
+      self.x, self.y = y, x if meridian_180?
     end
 
     # @return [Integer] the level
     def level
       unit.level
+    end
+
+    # @return [Boolean] true if the tile is placed on the 180th meridian
+    def meridian_180?
+      H_BASE - easting < unit.size
     end
 
     # @return [Float] the mercator easting
@@ -54,25 +60,17 @@ module GeoHex
       @northing ||= (H_K * x * unit.width + y * unit.height) / 2.0
     end
 
-    # @return [GeoHex::Tile] inverted coordinates (destructive)
-    def invert!
-      xx = x
-      self.x = y
-      self.y = xx
-      self
-    end
-
     # @return [GeoHex::LL] the lat/lon coordinates
     def to_ll
-      lon = easting / H_BASE * 180.0
+      lon = meridian_180? ? 180.0 : easting / H_BASE * 180.0
       lat = northing / H_BASE * 180.0
       lat = 180.0 / Math::PI * (2 * Math.atan(Math.exp(lat * H_D2R)) - Math::PI / 2.0)
       LL.new(lat, lon)
     end
 
-    # @return [Sting] GeoHex code
+    # @return [GeoHex::Zone] GeoHex zone
     def encode
-      string, mod_x, mod_y = "", self.x, self.y
+      code, mod_x, mod_y = "", self.x, self.y
 
       (0..level+2).reverse_each do |i|
         pow = 3 ** i
@@ -98,11 +96,13 @@ module GeoHex
           1
         end
 
-        string << Integer([c3_x, c3_y].join, 3).to_s
+        code << Integer([c3_x, c3_y].join, 3).to_s
       end
 
-      number = string[0..2].to_i
-      H_KEY[number / 30] + H_KEY[number % 30] + string[3..-1]
+      number = code[0..2].to_i
+      code   = H_KEY[number / 30] + H_KEY[number % 30] + code[3..-1]
+
+      Zone.new to_ll, self, code
     end
 
   end
