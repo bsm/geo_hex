@@ -8,11 +8,9 @@ require 'geo_hex/decoder'
 
 module GeoHex
   H_KEY  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".freeze
-  H_KEYI = H_KEY.chars.inject({}) {|r, c| r.merge c => H_KEY.index(c) }.freeze
   H_BASE = 20037508.34
   H_D2R  = Math::PI / 180.0
   H_DEG  = H_D2R * 30
-  H_RAD  = H_BASE / 180.0
   H_K    = Math.tan(H_DEG)
 
   # @see GeoHex::Encoder.encode
