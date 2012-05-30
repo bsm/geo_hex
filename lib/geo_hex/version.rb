@@ -1,3 +1,3 @@
 module GeoHex
-  VERSION = "3.01.0".freeze
+  VERSION = "3.01.1".freeze
 end
