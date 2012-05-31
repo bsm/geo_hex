@@ -1,6 +1,7 @@
 module GeoHex
 
   class Polygon < Struct.new(:easting, :northing, :size)
+    H_DEG = Math.tan(Math::PI / 180.0 * 60)
 
     # @return [GeoHex::PP] The Northeast point of the Zone
     def north_east
