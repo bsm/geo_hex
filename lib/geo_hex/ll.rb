@@ -44,6 +44,18 @@ module GeoHex
       to_pp.to_zone(level)
     end
 
-  end
+    # @param [GeoHex::PP] other coordinates
+    # @return [Float] distance in meters
+    def distance_to(other)
+      d_lat, d_lon = (other.lat - lat) * H_D2R / 2.0, (other.lon - lon) * H_D2R / 2.0
+      lat1, lat2   = lat * H_D2R, other.lat * H_D2R
 
+      a = Math.sin(d_lat) ** 2 +
+          Math.sin(d_lon) ** 2 * Math.cos(lat1) * Math.cos(lat2)
+      c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+
+      H_ER * c
+    end
+
+  end
 end

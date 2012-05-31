@@ -21,4 +21,8 @@ describe GeoHex::LL do
     subject.to_zone(7).y.should == 5668
   end
 
+  it 'should calculate distance' do
+    subject.distance_to(described_class.new(40.69, -74.04)).should be_within(1).of(5_586_704)
+  end
+
 end

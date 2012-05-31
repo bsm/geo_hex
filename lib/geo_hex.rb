@@ -11,6 +11,7 @@ module GeoHex
   H_D2R  = Math::PI / 180.0
   H_DEG  = H_D2R * 30
   H_K    = Math.tan(H_DEG)
+  H_ER   = 6_371_007.2
 
   # @param [Float] lat the latitude
   # @param [Float] lon the longitude
