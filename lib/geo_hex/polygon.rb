@@ -42,6 +42,7 @@ module GeoHex
     def points
       @points ||= [ne, e, se, sw, w, nw]
     end
+    alias_method :to_a, :points
 
     private
 

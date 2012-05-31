@@ -2,9 +2,8 @@ require 'spec_helper'
 
 describe GeoHex::Polygon do
 
-  subject do
-    described_class.new(-17306, 6710328, 339.33)
-  end
+  let(:pg) { described_class.new(-17306, 6710328, 339.33) }
+  subject  { pg }
 
   def projection(*args)
     GeoHex::PP.new(*args)
@@ -46,16 +45,8 @@ describe GeoHex::Polygon do
     subject.north_west.should eq(subject.nw)
   end
 
-  describe "points" do
-    it "should include all 6 coordinates from NE round to NW" do
-      subject.points.should == [
-        subject.north_east,
-        subject.east,
-        subject.south_east,
-        subject.south_west,
-        subject.west,
-        subject.north_west
-      ]
-    end
+  its(:points) do
+    should == [pg.north_east, pg.east, pg.south_east, pg.south_west, pg.west, pg.north_west]
   end
+
 end
