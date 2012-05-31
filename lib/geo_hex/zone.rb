@@ -55,12 +55,12 @@ module GeoHex
 
     # @return [Float] the longitude coordinate
     def lon
-      @lon ||= LL.normalize(meridian_180? ? 180.0 : easting / H_BASE * 180.0)
+      meridian_180? ? 180.0 : projection.lon
     end
 
     # @return [Float] the latitude coordinate
     def lat
-      @lat ||= 180.0 / Math::PI * (2 * Math.atan(Math.exp(northing / H_BASE * 180.0 * H_D2R)) - Math::PI / 2.0)
+      projection.lat
     end
 
     # @return [String] GeoHex code
@@ -68,6 +68,11 @@ module GeoHex
       @code ||= encode
     end
     alias_method :to_s, :code
+
+    # @return [GeoHex::Projection] zone center, projection coordinates
+    def projection
+      @projection ||= GeoHex::Projection.new(easting, northing)
+    end
 
     # @param [Integer] range the number of zones to search within
     # @return [Array<GeoHex::Zone>] the neighbouring zones
@@ -159,7 +164,8 @@ module GeoHex
 
       # @return [Boolean] true if the zone is placed on the 180th meridian
       def meridian_180?
-        H_BASE - easting < unit.size
+        return @meridian_180 if defined?(@meridian_180)
+        @meridian_180 = H_BASE - easting < unit.size
       end
 
   end

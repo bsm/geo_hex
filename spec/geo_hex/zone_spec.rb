@@ -6,14 +6,15 @@ describe GeoHex::Zone do
     described_class.new(5700, 5717, 7)
   end
 
-  it             { should_not be_meridian_180 }
-  its(:unit)     { should be_instance_of(GeoHex::Unit) }
-  its(:level)    { should == 7 }
-  its(:easting)  { should be_within(1).of(-17306) }
-  its(:northing) { should be_within(1).of(6710328) }
-  its(:code)     { should == "QE0166383" }
-  its(:lat)      { should be_within(0.0001).of(51.5006) }
-  its(:lon)      { should be_within(0.0001).of(-0.1554) }
+  it              { should_not be_meridian_180 }
+  its(:unit)      { should be_instance_of(GeoHex::Unit) }
+  its(:level)     { should == 7 }
+  its(:easting)   { should be_within(1).of(-17306) }
+  its(:northing)  { should be_within(1).of(6710328) }
+  its(:code)      { should == "QE0166383" }
+  its(:lat)       { should be_within(0.0001).of(51.5006) }
+  its(:lon)       { should be_within(0.0001).of(-0.1554) }
+  its(:projection){ should be_instance_of(GeoHex::Projection) }
 
   it 'should find neighbours' do
     subject.neighbours(1).should have(6).items

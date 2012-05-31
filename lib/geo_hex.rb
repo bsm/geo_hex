@@ -1,6 +1,7 @@
 require 'bigdecimal'
 require 'geo_hex/version'
 require 'geo_hex/ll'
+require 'geo_hex/projection'
 require 'geo_hex/zone'
 require 'geo_hex/unit'
 
