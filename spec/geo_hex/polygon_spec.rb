@@ -2,47 +2,67 @@ require 'spec_helper'
 
 describe GeoHex::Polygon do
 
-  let(:pg) { described_class.new(-17306, 6710328, 339.33) }
+  let(:pg) { GeoHex.decode("QE0166383").polygon }
   subject  { pg }
 
-  def projection(*args)
-    GeoHex::PP.new(*args)
+  describe "east" do
+    subject { pg.east.to_ll }
+
+    its(:lat) { should be_within(0.001).of(51.500) }
+    its(:lon) { should be_within(0.001).of(-0.149) }
+    it "should alias to e" do
+      pg.e.should eq(pg.east)
+    end
   end
 
-  its(:north_east) { should be_a(GeoHex::PP) }
-  its(:north_east) { should == projection(-16966.67, 6710505.672772524) }
-  it "should alias north_east to ne" do
-    subject.north_east.should eq(subject.ne)
+  describe "west" do
+    subject { pg.west.to_ll }
+
+    its(:lat) { should be_within(0.001).of(51.500) }
+    its(:lon) { should be_within(0.001).of(-0.161) }
+    it "should alias to w" do
+      pg.w.should eq(pg.west)
+    end
   end
 
-  its(:east) { should be_a(GeoHex::PP) }
-  its(:east) { should == projection(-16627.34, 6710328) }
-  it "should alias east to e" do
-    subject.east.should eq(subject.e)
+  describe "north east" do
+    subject { pg.north_east.to_ll }
+
+    its(:lat) { should be_within(0.001).of(51.503) }
+    its(:lon) { should be_within(0.001).of(-0.152) }
+    it "should alias to ne" do
+      pg.ne.should eq(pg.north_east)
+    end
   end
 
-  its(:south_east) { should be_a(GeoHex::PP) }
-  its(:south_east) { should == projection(-16966.67, 6710150.327227476 ) }
-  it "should alias south_east to se" do
-    subject.south_east.should eq(subject.se)
+  describe "north west" do
+    subject { pg.north_west.to_ll }
+
+    its(:lat) { should be_within(0.001).of(51.503) }
+    its(:lon) { should be_within(0.001).of(-0.158) }
+    it "should alias to nw" do
+      pg.nw.should eq(pg.north_west)
+    end
   end
 
-  its(:south_west) { should be_a(GeoHex::PP) }
-  its(:south_west) { should == projection(-17645.33, 6710150.327227476) }
-  it "should alias south_west to sw" do
-    subject.south_west.should eq(subject.sw)
+  describe "south east" do
+    subject { pg.south_east.to_ll }
+
+    its(:lat) { should be_within(0.001).of(51.497) }
+    its(:lon) { should be_within(0.001).of(-0.152) }
+    it "should alias to se" do
+      pg.se.should eq(pg.south_east)
+    end
   end
 
-  its(:west) { should be_a(GeoHex::PP) }
-  its(:west) { should == projection(-17984.66, 6710328) }
-  it "should alias west to w" do
-    subject.west.should eq(subject.w)
-  end
+  describe "south west" do
+    subject { pg.south_west.to_ll }
 
-  its(:north_west) { should be_a(GeoHex::PP) }
-  its(:north_west) { should == projection(-17645.33, 6710505.672772524) }
-  it "should alias north_west to w" do
-    subject.north_west.should eq(subject.nw)
+    its(:lat) { should be_within(0.001).of(51.497) }
+    its(:lon) { should be_within(0.001).of(-0.158) }
+    it "should alias to sw" do
+      pg.sw.should eq(pg.south_west)
+    end
   end
 
   its(:points) do
