@@ -69,10 +69,26 @@ module GeoHex
     end
     alias_method :to_s, :code
 
-    # @param [Integer] radius the number of zones to search within
+    # @param [Integer] range the number of zones to search within
     # @return [Array<GeoHex::Zone>] the neighbouring zones
-    def neighbours(radius)
-      []
+    def neighbours(range)
+      zones  = []
+      x0, xn = x - range, x + range
+
+      x0.upto(xn) do |xi|
+        zones << self.class.new(xi, y, level) unless xi == x
+      end
+
+      1.upto(range) do |i|
+        y+i % 2 == 1 ? xn-=1 : x0+=1
+
+        x0.upto(xn) do |xi|
+          zones << self.class.new(xi, y+i, level)
+          zones << self.class.new(xi, y-i, level)
+        end
+      end
+
+      zones
     end
     alias_method :neighbors, :neighbours
 
