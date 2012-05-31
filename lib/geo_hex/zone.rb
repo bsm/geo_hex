@@ -69,6 +69,13 @@ module GeoHex
     end
     alias_method :to_s, :code
 
+    # @param [Integer] radius the number of zones to search within
+    # @return [Array<GeoHex::Zone>] the neighbouring zones
+    def neighbours(radius)
+      []
+    end
+    alias_method :neighbors, :neighbours
+
     # @param [Zone, String] other another Zone or a GeoHex code (String)
     # @return [Boolean] true, if given Zone or GeoHex code (String) matches self
     def ==(other)
@@ -82,8 +89,10 @@ module GeoHex
       end
     end
 
-    # @return [Fixnum]
-    def hash; [x, y, level].hash; end
+    # @return [Fixnum] the object hash
+    def hash
+      [x, y, level].hash
+    end
 
     protected
 

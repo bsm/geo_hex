@@ -15,6 +15,11 @@ describe GeoHex::Zone do
   its(:lat)      { should be_within(0.0001).of(51.5006) }
   its(:lon)      { should be_within(0.0001).of(-0.1554) }
 
+  it 'should find neighbours' do
+    subject.neighbours(1).should have(6).items
+    subject.neighbours(2).should have(18).items
+    subject.neighbours(3).should have(36).items
+  end
 
   describe "if on meridian 180" do
     subject { described_class.new(7, -2, 0) }
