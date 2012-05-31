@@ -32,11 +32,16 @@ module GeoHex
       @northing ||= Math.log(Math.tan((90 + lat) * H_D2R / 2)) / Math::PI * H_BASE
     end
 
+    # @return [GeoHex::PP] the full projection point coordinates
+    def to_pp
+      GeoHex::PP.new(easting, northing)
+    end
+
     # Converts coordinates to Zone
     # @param [Integer] level the level
     # @return [GeoHex::Zone] the coordinates
     def to_zone(level)
-      Zone.normalize(easting, northing, level)
+      to_pp.to_zone(level)
     end
 
   end

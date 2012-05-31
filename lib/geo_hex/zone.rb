@@ -3,28 +3,6 @@ module GeoHex
   # A positioned instance of a Unit, within a level-grid
   class Zone
 
-    # @param [Float] the mercator easting
-    # @param [Float] the mercator northing
-    # @param [Integer] level the level
-    # @return [GeoHex::Zone] a normalized, positioned zone
-    def self.normalize(easting, northing, level)
-      u = Unit[level]
-      x = (easting + northing / H_K) / u.width
-      y = (northing - H_K * easting) / u.height
-
-      x0, y0 = x.floor, y.floor
-      xq, yq = x - x0, y - y0
-      xn, yn = if yq > -xq + 1 && yq < 2 * xq && yq > 0.5 * xq
-        [x0 + 1, y0 + 1]
-      elsif yq < -xq + 1 && yq > 2 * xq - 1 && yq < 0.5 * xq + 0.5
-        [x0, y0]
-      else
-        [x.round, y.round]
-      end
-
-      new(xn, yn, level)
-    end
-
     # @return [Integer] the zone coordinates within the grid
     attr_reader :x, :y
 
@@ -55,12 +33,12 @@ module GeoHex
 
     # @return [Float] the longitude coordinate
     def lon
-      meridian_180? ? 180.0 : projection.lon
+      meridian_180? ? 180.0 : point.lon
     end
 
     # @return [Float] the latitude coordinate
     def lat
-      projection.lat
+      point.lat
     end
 
     # @return [String] GeoHex code
@@ -69,9 +47,9 @@ module GeoHex
     end
     alias_method :to_s, :code
 
-    # @return [GeoHex::Projection] zone center, projection coordinates
-    def projection
-      @projection ||= GeoHex::Projection.new(easting, northing)
+    # @return [GeoHex::PP] zone center, point coordinates
+    def point
+      @point ||= GeoHex::PP.new(easting, northing)
     end
 
     # @param [Integer] range the number of zones to search within

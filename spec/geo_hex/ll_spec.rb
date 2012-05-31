@@ -8,6 +8,7 @@ describe GeoHex::LL do
 
   its(:easting)  { should be_within(1).of(-11132) }
   its(:northing) { should be_within(1).of(6656748) }
+  its(:to_pp)    { should be_instance_of(GeoHex::PP) }
 
   it "should normalize longitude" do
     described_class.new(51.0, -182).lon.should == 178

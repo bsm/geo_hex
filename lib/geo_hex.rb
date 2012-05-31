@@ -1,7 +1,7 @@
 require 'bigdecimal'
 require 'geo_hex/version'
 require 'geo_hex/ll'
-require 'geo_hex/projection'
+require 'geo_hex/pp'
 require 'geo_hex/zone'
 require 'geo_hex/unit'
 
@@ -36,7 +36,7 @@ module GeoHex
       case (num % 10) when 0 then y -= pow when 2 then y += pow end
     end
 
-    GeoHex::Zone.new(x, y, chars-2).send(:with_code, code)
+    Zone.new(x, y, chars-2).send(:with_code, code)
   end
 
 end

@@ -14,7 +14,7 @@ describe GeoHex::Zone do
   its(:code)      { should == "QE0166383" }
   its(:lat)       { should be_within(0.0001).of(51.5006) }
   its(:lon)       { should be_within(0.0001).of(-0.1554) }
-  its(:projection){ should be_instance_of(GeoHex::Projection) }
+  its(:point)     { should be_instance_of(GeoHex::PP) }
 
   it 'should find neighbours' do
     subject.neighbours(1).should have(6).items
@@ -28,16 +28,6 @@ describe GeoHex::Zone do
     it { should be_meridian_180 }
     its(:x) { should == -2 }
     its(:y) { should == 7 }
-  end
-
-  describe "normalize" do
-    subject { described_class.normalize(-17306, 6710328, 7) }
-
-    its(:level) { should == 7 }
-    its(:x)     { should == 5700 }
-    its(:y)     { should == 5717 }
-    its(:easting)  { should be_within(1).of(-17306) }
-    its(:northing) { should be_within(1).of(6710328) }
   end
 
   it "should be comparable" do
