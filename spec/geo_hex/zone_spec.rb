@@ -45,4 +45,13 @@ describe GeoHex::Zone do
     subject.should eql(subject)
   end
 
+  it "should support common set operations" do
+    z1 = subject
+    z2 = described_class.new(7, -1, 0)
+    z3 = described_class.new(8, -1, 0)
+    [z1, z2, z1.clone].uniq.should have(2).items
+    ([z1, z2, z3] & [z2.clone, z3.clone]).should == [z2, z3]
+    ([z1, z2, z3] - [z2.clone, z3.clone]).should == [z1]
+  end
+
 end
