@@ -15,6 +15,7 @@ describe GeoHex::Zone do
   its(:lat)       { should be_within(0.0001).of(51.5006) }
   its(:lon)       { should be_within(0.0001).of(-0.1554) }
   its(:point)     { should be_instance_of(GeoHex::PP) }
+  its(:polygon)   { should be_instance_of(GeoHex::Polygon) }
 
   it 'should find neighbours' do
     subject.neighbours(1).should have(6).items

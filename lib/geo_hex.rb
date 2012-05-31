@@ -4,6 +4,7 @@ require 'geo_hex/ll'
 require 'geo_hex/pp'
 require 'geo_hex/zone'
 require 'geo_hex/unit'
+require 'geo_hex/polygon'
 
 module GeoHex
   H_KEY  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".freeze

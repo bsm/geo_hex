@@ -52,6 +52,11 @@ module GeoHex
       @point ||= GeoHex::PP.new(easting, northing)
     end
 
+    # @return [<GeoHex::Polygon>] Zone's NE, E, SE, SW, W and NW points
+    def polygon
+      @polygon ||= GeoHex::Polygon.new(easting, northing, unit.size)
+    end
+
     # @param [Integer] range the number of zones to search within
     # @return [Array<GeoHex::Zone>] the neighbouring zones
     def neighbours(range)
