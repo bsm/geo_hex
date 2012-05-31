@@ -1,7 +1,7 @@
 module GeoHex
 
   class Polygon < Struct.new(:easting, :northing, :size)
-    H_DEG = Math.tan(Math::PI / 180.0 * 60)
+    H_K = Math.tan(Math::PI / 180.0 * 60)
 
     # @return [GeoHex::PP] The Northeast point of the Zone
     def north_east
@@ -49,7 +49,7 @@ module GeoHex
 
       # @return [Float] The northing of the Northern boundary of the Zone
       def north_bound
-        @north_bound ||= northing + H_DEG * size
+        @north_bound ||= northing + H_K * size
       end
 
       # @return [Float] The easting of both Eastern corners of the Zone
@@ -59,7 +59,7 @@ module GeoHex
 
       # @return [Float] The northing of the Southern boundary of the Zone
       def south_bound
-        @south_bound ||= northing - H_DEG * size
+        @south_bound ||= northing - H_K * size
       end
 
       # @return [Float] The easting of both Western corners of the Zone
