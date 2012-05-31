@@ -1,6 +1,6 @@
 module GeoHex
 
-  # A Unit is a class of Tiles. It has a `level`, `width`, `height` and
+  # A Unit is a class of Zones. It has a `level`, `width`, `height` and
   # overall `size`. Dimensions vary for different levels.
   class Unit
 

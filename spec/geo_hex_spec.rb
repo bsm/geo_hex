@@ -3,7 +3,7 @@ require 'spec_helper'
 describe GeoHex do
 
   it "should encode coordinates" do
-    described_class.encode(0, 0, 0).should be_instance_of(GeoHex::Tile)
+    described_class.encode(0, 0, 0).should be_instance_of(GeoHex::Zone)
   end
 
   it "should encode correctly" do
@@ -14,16 +14,16 @@ describe GeoHex do
   end
 
   it "should decode strings" do
-    described_class.decode("OY").should be_instance_of(GeoHex::Tile)
+    described_class.decode("OY").should be_instance_of(GeoHex::Zone)
   end
 
   it "should decode correctly" do
     CSV.foreach(File.expand_path("../cases.csv", __FILE__)) do |lat, lon, level, code|
       lat, lon, level = lat.to_f, lon.to_f, level.to_i
-      tile = GeoHex::LL.new(lat, lon).to_tile(level)
+      zone = GeoHex::LL.new(lat, lon).to_zone(level)
 
-      zone = described_class.decode(code)
-      [zone.to_s, zone.level, zone.x, zone.y].should == [code, level, tile.x, tile.y]
+      decoded_zone = described_class.decode(code)
+      [decoded_zone.to_s, decoded_zone.level, decoded_zone.x, decoded_zone.y].should == [code, level, zone.x, zone.y]
       zone.lon.should be_within(180.0).of(0.0)
     end
   end

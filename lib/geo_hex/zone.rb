@@ -1,12 +1,12 @@
 module GeoHex
 
   # A positioned instance of a Unit, within a level-grid
-  class Tile
+  class Zone
 
     # @param [Float] the mercator easting
     # @param [Float] the mercator northing
     # @param [Integer] level the level
-    # @return [GeoHex::Tile] a normalized, positioned tile
+    # @return [GeoHex::Zone] a normalized, positioned zone
     def self.normalize(easting, northing, level)
       u = Unit[level]
       x = (easting + northing / H_K) / u.width
@@ -25,7 +25,7 @@ module GeoHex
       new(xn, yn, level)
     end
 
-    # @return [Integer] the tile coordinates within the grid
+    # @return [Integer] the zone coordinates within the grid
     attr_reader :x, :y
 
     # @return [GeoHex::Unit] the associated unit
@@ -72,7 +72,7 @@ module GeoHex
     protected
 
       # @param [String] code the GeoHex code
-      # @return [GeoHex::Tile] GeoHex tile
+      # @return [GeoHex::Zone] GeoHex zone
       def with_code(code)
         @code = code
         self
@@ -115,7 +115,7 @@ module GeoHex
         "#{H_KEY[number / 30]}#{H_KEY[number % 30]}#{code[3..-1]}"
       end
 
-      # @return [Boolean] true if the tile is placed on the 180th meridian
+      # @return [Boolean] true if the zone is placed on the 180th meridian
       def meridian_180?
         H_BASE - easting < unit.size
       end

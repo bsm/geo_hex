@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe GeoHex::Tile do
+describe GeoHex::Zone do
 
   subject do
     described_class.new(5700, 5717, 7)
