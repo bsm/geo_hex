@@ -34,4 +34,10 @@ describe GeoHex::Zone do
     its(:northing) { should be_within(1).of(6710328) }
   end
 
+  it "should be comparable" do
+    subject.should == subject
+    subject.should == subject.to_s
+    subject.should eql(subject)
+  end
+
 end

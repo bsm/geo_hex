@@ -69,6 +69,22 @@ module GeoHex
     end
     alias_method :to_s, :code
 
+    # @param [Zone, String] other another Zone or a GeoHex code (String)
+    # @return [Boolean] true, if given Zone or GeoHex code (String) matches self
+    def ==(other)
+      case other
+      when String
+        to_s == other
+      when self.class
+        x == other.x && y == other.y && level == other.level
+      else
+        super
+      end
+    end
+
+    # @return [Fixnum]
+    def hash; [x, y, level].hash; end
+
     protected
 
       # @param [String] code the GeoHex code
