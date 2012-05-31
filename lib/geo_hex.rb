@@ -2,7 +2,6 @@ require 'bigdecimal'
 require 'geo_hex/version'
 require 'geo_hex/ll'
 require 'geo_hex/tile'
-require 'geo_hex/zone'
 require 'geo_hex/unit'
 
 module GeoHex
@@ -15,12 +14,13 @@ module GeoHex
   # @param [Float] lat the latitude
   # @param [Float] lon the longitude
   # @param [Integer] level the level
-  # @return [GeoHex::Zone] the encoded zone
+  # @return [GeoHex::Tile] the encoded tile
   def self.encode(lat, lon, level = 7)
-    LL.new(lat, lon).to_tile(level).encode
+    LL.new(lat, lon).to_tile(level)
   end
 
   # @param [String] code the GeoHex code
+  # @return [GeoHex::Tile] the decoded tile
   def self.decode(code)
     x, y   = 0, 0
     chars  = code.size
@@ -35,7 +35,7 @@ module GeoHex
       case (num % 10) when 0 then y -= pow when 2 then y += pow end
     end
 
-    GeoHex::Tile.new(x, y, chars-2).to_zone(code)
+    GeoHex::Tile.new(x, y, chars-2).send(:with_code, code)
   end
 
 end

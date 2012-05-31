@@ -1,17 +1,24 @@
 module GeoHex
 
   # Lat/Lon coordinates
-  class LL < Struct.new(:lat, :lon)
+  class LL
+
+    def self.normalize(lon)
+      if lon < -180
+        lon += 360
+      elsif lon > 180
+        lon -= 360
+      else
+        lon
+      end
+    end
+
+    attr_reader :lat, :lon
 
     # @param [Float] lat the latitude
     # @param [Float] lon the longitude
     def initialize(lat, lon)
-      super
-      if lon < -180
-        self.lon += 360
-      elsif lon > 180
-        self.lon -= 360
-      end
+      @lat, @lon = lat, self.class.normalize(lon)
     end
 
     # Converts coordinates to Tile

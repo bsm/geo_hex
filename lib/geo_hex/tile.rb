@@ -53,56 +53,67 @@ module GeoHex
       unit.level
     end
 
-    # @return [GeoHex::LL] the lat/lon coordinates
-    def to_ll
-      lon = meridian_180? ? 180.0 : easting / H_BASE * 180.0
-      lat = northing / H_BASE * 180.0
-      lat = 180.0 / Math::PI * (2 * Math.atan(Math.exp(lat * H_D2R)) - Math::PI / 2.0)
-      LL.new(lat, lon)
+    # @return [Float] the longitude coordinate
+    def lon
+      @lon ||= LL.normalize(meridian_180? ? 180.0 : easting / H_BASE * 180.0)
     end
 
-    # @return [GeoHex::Zone] GeoHex zone
-    def encode
-      code, mod_x, mod_y = "", self.x, self.y
+    # @return [Float] the latitude coordinate
+    def lat
+      @lat ||= 180.0 / Math::PI * (2 * Math.atan(Math.exp(northing / H_BASE * 180.0 * H_D2R)) - Math::PI / 2.0)
+    end
 
-      (0..level+2).reverse_each do |i|
-        pow = 3 ** i
-        p2c = (pow / 2.0).ceil
+    # @return [String] GeoHex code
+    def code
+      @code ||= encode
+    end
+    alias_method :to_s, :code
 
-        c3_x = if mod_x >= p2c
-          mod_x -= pow
-          2
-        elsif mod_x <= -p2c
-          mod_x += pow
-          0
-        else
-          1
-        end
+    protected
 
-        c3_y = if mod_y >= p2c
-          mod_y -= pow
-          2
-        elsif mod_y <= -p2c
-          mod_y += pow
-          0
-        else
-          1
-        end
-
-        code << Integer([c3_x, c3_y].join, 3).to_s
+      # @param [String] code the GeoHex code
+      # @return [GeoHex::Tile] GeoHex tile
+      def with_code(code)
+        @code = code
+        self
       end
 
-      number = code[0..2].to_i
-      to_zone "#{H_KEY[number / 30]}#{H_KEY[number % 30]}#{code[3..-1]}"
-    end
-
-    # @param [String] code the GeoHex code
-    # @return [GeoHex::Zone] GeoHex zone
-    def to_zone(code)
-      Zone.new to_ll, self, code
-    end
-
     private
+
+      # @return [String] GeoHex code
+      def encode
+        code, mod_x, mod_y = "", self.x, self.y
+
+        (0..level+2).reverse_each do |i|
+          pow = 3 ** i
+          p2c = (pow / 2.0).ceil
+
+          c3_x = if mod_x >= p2c
+            mod_x -= pow
+            2
+          elsif mod_x <= -p2c
+            mod_x += pow
+            0
+          else
+            1
+          end
+
+          c3_y = if mod_y >= p2c
+            mod_y -= pow
+            2
+          elsif mod_y <= -p2c
+            mod_y += pow
+            0
+          else
+            1
+          end
+
+          code << Integer([c3_x, c3_y].join, 3).to_s
+        end
+
+        number = code[0..2].to_i
+        "#{H_KEY[number / 30]}#{H_KEY[number % 30]}#{code[3..-1]}"
+      end
 
       # @return [Boolean] true if the tile is placed on the 180th meridian
       def meridian_180?

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe GeoHex do
 
   it "should encode coordinates" do
-    described_class.encode(0, 0, 0).should be_instance_of(GeoHex::Zone)
+    described_class.encode(0, 0, 0).should be_instance_of(GeoHex::Tile)
   end
 
   it "should encode correctly" do
@@ -14,7 +14,7 @@ describe GeoHex do
   end
 
   it "should decode strings" do
-    described_class.decode("OY").should be_instance_of(GeoHex::Zone)
+    described_class.decode("OY").should be_instance_of(GeoHex::Tile)
   end
 
   it "should decode correctly" do
