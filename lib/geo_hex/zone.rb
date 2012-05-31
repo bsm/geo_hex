@@ -104,6 +104,7 @@ module GeoHex
         super
       end
     end
+    alias_method :eql?, :==
 
     # @return [Fixnum] the object hash
     def hash
