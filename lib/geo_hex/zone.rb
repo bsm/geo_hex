@@ -114,7 +114,7 @@ module GeoHex
       def encode
         code, mod_x, mod_y = "", self.x, self.y
 
-        (0..level+2).reverse_each do |i|
+        (level+2).downto(0) do |i|
           pow = 3 ** i
           p2c = (pow / 2.0).ceil
 
