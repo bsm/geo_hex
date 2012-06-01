@@ -3,7 +3,7 @@ module GeoHex
   # Lat/Lon coordinates
   class LL
 
-    # @return [Float] latitude
+    # @return [Float] longitude
     def self.normalize(lon)
       if lon < -180
         lon += 360
