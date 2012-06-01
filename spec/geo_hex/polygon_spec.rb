@@ -75,6 +75,26 @@ describe GeoHex::Polygon do
     end
   end
 
+  describe "north" do
+    subject { pg.north.to_ll }
+
+    its(:lat) { should be_within(10**-6).of(51.503899) }
+    its(:lon) { should be_within(10**-6).of(-0.155464) }
+    it "should alias to n" do
+      pg.n.should eq(pg.north)
+    end
+  end
+
+  describe "south" do
+    subject { pg.south.to_ll }
+
+    its(:lat) { should be_within(10**-6).of(51.497326) }
+    its(:lon) { should be_within(10**-6).of(-0.155464) }
+    it "should alias to s" do
+      pg.s.should eq(pg.south)
+    end
+  end
+
   its(:points) do
     should == [pg.north_east, pg.east, pg.south_east, pg.south_west, pg.west, pg.north_west]
   end

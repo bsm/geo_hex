@@ -45,6 +45,18 @@ module GeoHex
     end
     alias_method :nw, :north_west
 
+    # @return [GeoHex::PP] Point in the middle of the northern polygon boundary
+    def north
+      @north ||= PP.new(easting, north_bound)
+    end
+    alias_method :n, :north
+
+    # @return [GeoHex::PP] Point in the middle of the southern polygon boundary
+    def south
+      @south ||= PP.new(easting, south_bound)
+    end
+    alias_method :s, :south
+
     # @return [Array<GeoHex::PP>] All the points of the Polygon, ordered from Northeast round to Northwest
     def points
       @points ||= [ne, e, se, sw, w, nw]
