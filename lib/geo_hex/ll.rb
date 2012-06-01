@@ -3,7 +3,7 @@ module GeoHex
   # Lat/Lon coordinates
   class LL
 
-    # @return [Float] latitude
+    # @return [Float] longitude
     def self.normalize(lon)
       if lon < -180
         lon += 360
@@ -27,7 +27,7 @@ module GeoHex
       @easting ||= lon * H_BASE / 180.0
     end
 
-    # @return [Float] mercator easting
+    # @return [Float] mercator northing
     def northing
       @northing ||= Math.log(Math.tan((90 + lat) * H_D2R / 2)) / Math::PI * H_BASE
     end
