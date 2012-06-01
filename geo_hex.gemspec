@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
 
   s.authors     = ["Dimitrij Denissenko"]
   s.email       = "dimitrij@blacksquaremedia.com"
-  s.homepage    = "https://github.com/bsm/geohex3"
+  s.homepage    = "https://github.com/bsm/geo_hex"
 
   s.require_path = 'lib'
   s.files        = Dir['lib/**/*']
