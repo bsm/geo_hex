@@ -59,7 +59,7 @@ module GeoHex
 
     # @param [Integer] range the number of zones to search within
     # @return [Array<GeoHex::Zone>] the neighbouring zones
-    def neighbours(range)
+    def neighbours(range = 1)
       zones  = []
       x0, xn = x - range, x + range
 
