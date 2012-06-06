@@ -72,7 +72,7 @@ module GeoHex
 
         x0.upto(xn) do |xi|
           zones << self.class.new(xi, y+i, level)
-          zones << self.class.new(xi, y-i, level)
+          zones << self.class.new(xi-1, y-i, level)
         end
       end
 

@@ -19,6 +19,7 @@ describe GeoHex::Zone do
 
   it 'should find neighbours' do
     subject.neighbours(1).should have(6).items
+    GeoHex.decode("PF3246648").neighbours(1).map(&:to_s).should =~ %w(PF3246645 PF3246672 PF3246656 PF3246644 PF3246680 PF3246647)
     subject.neighbours(2).should have(18).items
     subject.neighbours(3).should have(36).items
   end
