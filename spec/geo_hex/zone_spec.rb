@@ -29,6 +29,15 @@ describe GeoHex::Zone do
     neighbours.first.should be_instance_of(described_class)
   end
 
+  it "should find the 'right' neighbours across multiple levels" do
+    neighbours = GeoHex.decode("PC674435").neighbours(2)
+    neighbours.map(&:to_s).should =~ %w(
+      PC674431 PC674432 PC674434 PC674438 PC674443 PC674446
+      PC674447 PC674470 PC674471 PC674406 PC674407 PC674430
+      PC674444 PC674440 PC674408 PC674433 PC674437 PC674462
+    )
+  end
+
   describe "if on meridian 180" do
     subject { described_class.new(7, -2, 0) }
 
