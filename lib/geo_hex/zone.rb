@@ -72,7 +72,7 @@ module GeoHex
 
         x0.upto(xn) do |xi|
           zones << self.class.new(xi, y+i, level)
-          zones << self.class.new(xi-1, y-i, level)
+          zones << self.class.new(xi-i, y-i, level)
         end
       end
 
@@ -97,6 +97,11 @@ module GeoHex
     # @return [Fixnum] the object hash
     def hash
       [x, y, level].hash
+    end
+
+    # @return [Array] x, y & level tuple
+    def to_a
+      [x, y, level]
     end
 
     protected
