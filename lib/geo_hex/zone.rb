@@ -104,6 +104,12 @@ module GeoHex
       [x, y, level]
     end
 
+    # @return [Boolean] true if the zone is placed on the 180th meridian
+    def meridian_180?
+      return @meridian_180 if defined?(@meridian_180)
+      @meridian_180 = H_BASE - easting < unit.size
+    end
+
     protected
 
       # @param [String] code the GeoHex code
@@ -143,17 +149,11 @@ module GeoHex
             1
           end
 
-          code << Integer([c3_x, c3_y].join, 3).to_s
+          code << (c3_x*3+c3_y).to_s
         end
 
         number = code[0..2].to_i
         "#{H_KEY[number / 30]}#{H_KEY[number % 30]}#{code[3..-1]}"
-      end
-
-      # @return [Boolean] true if the zone is placed on the 180th meridian
-      def meridian_180?
-        return @meridian_180 if defined?(@meridian_180)
-        @meridian_180 = H_BASE - easting < unit.size
       end
 
   end

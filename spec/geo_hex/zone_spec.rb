@@ -19,9 +19,9 @@ describe GeoHex::Zone do
   its(:to_a)      { should == [5700, 5717, 7] }
 
   it 'should find neighbours' do
-    subject.neighbours(1).should have(6).items
-    subject.neighbours(2).should have(18).items
-    subject.neighbours(3).should have(36).items
+    subject.neighbours(1).size.should eq(6)
+    subject.neighbours(2).size.should eq(18)
+    subject.neighbours(3).size.should eq(36)
   end
 
   it "should find the 'right' neighbours" do
@@ -57,7 +57,7 @@ describe GeoHex::Zone do
     z1 = subject
     z2 = described_class.new(7, -1, 0)
     z3 = described_class.new(8, -1, 0)
-    [z1, z2, z1.clone].uniq.should have(2).items
+    [z1, z2, z1.clone].uniq.size.should eq(2)
     ([z1, z2, z3] & [z2.clone, z3.clone]).should == [z2, z3]
     ([z1, z2, z3] - [z2.clone, z3.clone]).should == [z1]
   end
