@@ -1,8 +1,8 @@
+# frozen_string_literal: true
+
 module GeoHex
-
   # Mercator projection point
-  class PP < Struct.new(:easting, :northing)
-
+  PP = Struct.new(:easting, :northing) do
     # @return [Float] longitude
     def lon
       @lon ||= LL.normalize(easting / H_BASE * 180.0)
@@ -26,19 +26,20 @@ module GeoHex
       x = (easting + northing / H_K) / u.width
       y = (northing - H_K * easting) / u.height
 
-      x0, y0 = x.floor, y.floor
-      xq, yq = x - x0, y - y0
-      xn, yn = if yq > -xq + 1 && yq < 2 * xq && yq > 0.5 * xq
-        [x0 + 1, y0 + 1]
-      elsif yq < -xq + 1 && yq > 2 * xq - 1 && yq < 0.5 * xq + 0.5
-        [x0, y0]
-      else
-        [x.round, y.round]
-      end
+      x0 = x.floor
+      y0 = y.floor
+      xq = x - x0
+      yq = y - y0
+      xn, yn =
+        if yq > -xq + 1 && yq < 2 * xq && yq > 0.5 * xq
+          [x0 + 1, y0 + 1]
+        elsif yq < -xq + 1 && yq > 2 * xq - 1 && yq < 0.5 * xq + 0.5
+          [x0, y0]
+        else
+          [x.round, y.round]
+        end
 
       Zone.new(xn, yn, level)
     end
-
   end
-
 end

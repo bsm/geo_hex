@@ -1,11 +1,11 @@
-module GeoHex
+# frozen_string_literal: true
 
+module GeoHex
   # A Unit is a class of Zones. It has a `level`, `width`, `height` and
   # overall `size`. Dimensions vary for different levels.
   class Unit
-
     class << self
-      private :new
+      private :new # rubocop:disable Style/AccessModifierDeclarations
 
       # @return [Boolean] true if unit caching is enabled, defaults to false
       def cache?
@@ -13,9 +13,7 @@ module GeoHex
       end
 
       # @param [Boolean] value set to true to enable caching (recommended)
-      def cache=(value)
-        @cache = value
-      end
+      attr_writer :cache
 
       # @return [Hash] cache store
       def store
@@ -27,7 +25,6 @@ module GeoHex
       def [](level)
         cache? ? store[level] ||= new(level) : new(level)
       end
-
     end
 
     attr_reader :level
@@ -39,7 +36,7 @@ module GeoHex
 
     # @return [Float] unit's mercator size
     def size
-      @size ||= H_BASE / 3**(level+3)
+      @size ||= H_BASE / 3**(level + 3)
     end
 
     # @return [Float] unit's mercator width
@@ -51,6 +48,5 @@ module GeoHex
     def height
       @height ||= width * H_K
     end
-
   end
 end

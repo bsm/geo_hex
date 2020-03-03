@@ -1,14 +1,14 @@
-module GeoHex
+# frozen_string_literal: true
 
+module GeoHex
   # Lat/Lon coordinates
   class LL
-
     # @return [Float] longitude
     def self.normalize(lon)
       if lon < -180
-        lon += 360
+        lon + 360
       elsif lon > 180
-        lon -= 360
+        lon - 360
       else
         lon
       end
@@ -19,7 +19,8 @@ module GeoHex
     # @param [Float] lat the latitude
     # @param [Float] lon the longitude
     def initialize(lat, lon)
-      @lat, @lon = lat, self.class.normalize(lon)
+      @lat = lat
+      @lon = self.class.normalize(lon)
     end
 
     # @return [Float] mercator easting
@@ -47,15 +48,16 @@ module GeoHex
     # @param [GeoHex::PP] other coordinates
     # @return [Float] distance in meters
     def distance_to(other)
-      d_lat, d_lon = (other.lat - lat) * H_D2R / 2.0, (other.lon - lon) * H_D2R / 2.0
-      lat1, lat2   = lat * H_D2R, other.lat * H_D2R
+      d_lat = (other.lat - lat) * H_D2R / 2.0
+      d_lon = (other.lon - lon) * H_D2R / 2.0
+      lat1 = lat * H_D2R
+      lat2 = other.lat * H_D2R
 
-      a = Math.sin(d_lat) ** 2 +
-          Math.sin(d_lon) ** 2 * Math.cos(lat1) * Math.cos(lat2)
-      c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+      a = Math.sin(d_lat)**2 +
+          Math.sin(d_lon)**2 * Math.cos(lat1) * Math.cos(lat2)
+      c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 
       H_ER * c
     end
-
   end
 end

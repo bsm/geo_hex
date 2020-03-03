@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bigdecimal'
 require 'geo_hex/version'
 require 'geo_hex/ll'
@@ -7,8 +9,8 @@ require 'geo_hex/unit'
 require 'geo_hex/polygon'
 
 module GeoHex
-  H_KEY  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".freeze
-  H_BASE = 20037508.34
+  H_KEY  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+  H_BASE = 20_037_508.34
   H_D2R  = Math::PI / 180.0
   H_K    = Math.tan(H_D2R * 30)
   H_ER   = 6_371_007.2
@@ -24,20 +26,20 @@ module GeoHex
   # @param [String] code the GeoHex code
   # @return [GeoHex::Zone] the decoded zone
   def self.decode(code)
-    x, y   = 0, 0
-    chars  = code.size
+    x = 0
+    y = 0
+    chars = code.size
     string = "#{H_KEY.index(code[0]) * 30 + H_KEY.index(code[1])}#{code[2..-1]}"
-    string = string.rjust(chars+1, "0")
-    nums   = string.chars.map {|c| c.to_i }
+    string = string.rjust(chars + 1, '0')
+    nums   = string.chars.map(&:to_i)
     nums.each_with_index do |num, i|
-      pow = 3**(chars-i)
+      pow = 3**(chars - i)
       num = num.to_s(3).to_i
 
       case (num / 10) when 0 then x -= pow when 2 then x += pow end
       case (num % 10) when 0 then y -= pow when 2 then y += pow end
     end
 
-    Zone.new(x, y, chars-2).send(:with_code, code)
+    Zone.new(x, y, chars - 2).send(:with_code, code)
   end
-
 end
